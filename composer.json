@@ -1,0 +1,25 @@
+{
+    "authors": [
+        {
+            "email": "support@bfansports.com",
+            "name": "bFAN Sports"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "SA": "src/"
+        }
+    },
+    "description": "Small library to access Opensearch hosted by AWS.",
+    "keywords": [
+        "AWS",
+        "Elasticsearch"
+    ],
+    "name": "bfansports/aws-opensearch-php-handler",
+    "require": {
+        "aws/aws-sdk-php": "3.*",
+        "elasticsearch/elasticsearch": "~2.1",
+        "php": ">=8.0"
+    },
+    "type": "library"
+}

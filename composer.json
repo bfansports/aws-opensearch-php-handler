@@ -18,7 +18,7 @@
     "name": "bfansports/aws-opensearch-php-handler",
     "require": {
         "aws/aws-sdk-php": "3.*",
-        "elasticsearch/elasticsearch": "~2.1",
+        "opensearch-project/opensearch-php": "~2.7",
         "php": ">=7.4"
     },
     "type": "library"

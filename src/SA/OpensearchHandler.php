@@ -4,7 +4,7 @@ namespace SA;
 
 use Aws\Credentials\CredentialProvider;
 use Aws\Signature\SignatureV4;
-use Opensearch\ClientBuilder;
+use OpenSearch\ClientBuilder;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Ring\Future\CompletedFutureArray;
@@ -33,12 +33,6 @@ class OpensearchHandler {
             $credentialProvider,
             $endpoints
         ) {
-            // Amazon ES listens on standard ports (443 for HTTPS, 80 for HTTP).
-            $request['headers']['Host'][0] = parse_url(
-                $request['headers']['Host'][0],
-                PHP_URL_HOST
-            );
-
             // Create a PSR-7 request from the array passed to the handler
             $psr7Request = new Request(
                 $request['http_method'],
@@ -82,10 +76,9 @@ class OpensearchHandler {
             ->build();
     }
 
-    public function aggregate($index, $query, $data, $type = null) {
+    public function aggregate($index, $query, $data) {
         $params = [
             "index" => $index,
-            "type" => $index,
             "body" => [
                 "query" => [
                     "query_string" => [
@@ -99,7 +92,6 @@ class OpensearchHandler {
         $body = [];
         foreach ($data as $k => $v) {
             $name = $k;
-            $type = $v['type'];
             $field = $v['field'];
             $body[$name] = [
                 $type => [
@@ -116,7 +108,6 @@ class OpensearchHandler {
     public function count($index, $query) {
         $params = [
             "index" => $index,
-            "type" => $index,
             "body" => [
                 "query" => [
                     "query_string" => [
@@ -133,7 +124,6 @@ class OpensearchHandler {
         $ex_index = explode("_", $index);
         $params = [
             "index" => $index,
-            "type" => $ex_index[0],
             "body" => $data,
         ];
 
@@ -155,7 +145,6 @@ class OpensearchHandler {
     public function deleteDocument($index, $id) {
         $params = [
             "index" => $index,
-            "type" => $index,
             "id" => $id,
         ];
 
@@ -207,7 +196,6 @@ class OpensearchHandler {
     ) {
         $params = [
             "index" => $index,
-            "type" => $index,
             "from" => $offset,
             "body" => [
                 "query" => [
@@ -301,14 +289,6 @@ class OpensearchHandler {
 
     public function reindex($params) {
         return $this->client->reindex($params);
-    }
-
-    public function getRetriesCount() {
-        //deprecated - we dont remove the function for the moment to not break existing script
-    }
-
-    public function setRetriesCount($retriesCount) {
-        //deprecated - we dont remove the function for the moment to not break existing script
     }
 
     public function getTimeout() {

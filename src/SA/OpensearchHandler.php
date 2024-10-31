@@ -221,7 +221,6 @@ class OpensearchHandler {
     public function scan($index, $query) {
         $params = [
             "body" => [
-                "sort" => [["_uid" => "asc"]],
                 "query" => [
                     "query_string" => [
                         "query" => $query,

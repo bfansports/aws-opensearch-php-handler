@@ -241,11 +241,8 @@ class OpensearchHandler {
 
             $results = array_merge($results, $hits);
 
-            if ( $last ) {
+            if ( !empty($last['sort']) ) {
                 $params['body']['search_after'] = $last['sort'];
-            }
-            else {
-                $params['body']['search_after'] = null;
             }
         } while (count($results) < $total);
 

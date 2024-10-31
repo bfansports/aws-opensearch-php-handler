@@ -70,8 +70,11 @@ class OpensearchHandler {
             ]);
         };
 
-        $this->client = ClientBuilder::create()
-            ->setHandler($handler)
+        $this->client = (new ClientBuilder())
+            // ->setHandler($handler)
+            ->setSigV4Region($_SERVER['AWS_DEFAULT_REGION'])
+            ->setSigV4Service('es')
+            ->setSigV4CredentialProvider($credentialProvider)
             ->setHosts($endpoints)
             ->build();
     }
@@ -121,17 +124,16 @@ class OpensearchHandler {
     }
 
     public function createDocument($index, $data, $id = null) {
-        $ex_index = explode("_", $index);
         $params = [
             "index" => $index,
-            "body" => $data,
+            "body" => $data
         ];
 
         if ($id != null) {
             $params['id'] = $id;
         }
-
-        return $this->client->index($params);
+        $temp = $this->client->create($params);
+        return $temp;
     }
 
     public function createIndex($index) {
@@ -168,7 +170,7 @@ class OpensearchHandler {
     }
 
     public function indices() {
-        return $this->client->indices()->stats();
+        return $this->client->cat()->indices();
     }
 
     public function query(
@@ -219,7 +221,6 @@ class OpensearchHandler {
     public function scan($index, $query) {
         $params = [
             "body" => [
-                "sort" => [["_uid" => "asc"]],
                 "query" => [
                     "query_string" => [
                         "query" => $query,
@@ -305,5 +306,9 @@ class OpensearchHandler {
 
     public function getIndexSettings($params) {
         return $this->client->indices()->getSettings($params);
+    }
+
+    public function bulk($data) {
+        return $this->client->bulk(["body" => $data]);
     }
 }

@@ -226,6 +226,7 @@ class OpensearchHandler {
                         "query" => $query,
                     ],
                 ],
+                "sort" => ["_id" => "asc"],  // Sort by a unique field, e.g., _id
             ],
             "index" => $index,
             "size" => 10000
@@ -233,21 +234,37 @@ class OpensearchHandler {
 
         $results = [];
         $total = 0;
+
         do {
             $temp = $this->client->search($params);
-            $total = $temp['hits']['total'];
-            $hits = $temp['hits']['hits'];
-            $last = end($hits);
 
+            // Check if there are hits in the response
+            if (isset($temp['hits']['total']['value'])) {
+                $total = $temp['hits']['total']['value'];
+            } else {
+                break;  // Stop if there's no total count
+            }
+
+            $hits = $temp['hits']['hits'];
             $results = array_merge($results, $hits);
 
-            if ( !empty($last['sort']) ) {
-                $params['body']['search_after'] = $last['sort'];
+            if (!empty($hits)) {
+                $last = end($hits);
+
+                if (!empty($last['sort'])) {
+                    $params['body']['search_after'] = $last['sort'];
+                } else {
+                    break;  // Stop if search_after is not available
+                }
+            } else {
+                break;  // Stop if there are no more hits
             }
+
         } while (count($results) < $total);
 
         return $results;
     }
+
 
     public function search($params = []) {
         return $this->client->search($params);

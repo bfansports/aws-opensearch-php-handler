@@ -97,7 +97,7 @@ class OpensearchHandler {
             $name = $k;
             $field = $v['field'];
             $body[$name] = [
-                $type => [
+                'sum' => [
                     "field" => $field,
                 ],
             ];

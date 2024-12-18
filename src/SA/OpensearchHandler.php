@@ -207,6 +207,7 @@ class OpensearchHandler {
                 ],
             ],
             "size" => $count,
+            "track_total_hits" => 50000
         ];
 
         if ($sort != null && $sort != "") {

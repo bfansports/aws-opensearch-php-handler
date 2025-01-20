@@ -230,7 +230,8 @@ class OpensearchHandler {
                 "sort" => ["_id" => "asc"],  // Sort by a unique field, e.g., _id
             ],
             "index" => $index,
-            "size" => 10000
+            "size" => 10000,
+            "track_total_hits" => 50000
         ];
 
         $results = [];
